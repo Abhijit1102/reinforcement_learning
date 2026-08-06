@@ -12,16 +12,16 @@ If you know the **current state**, you don't need the full history to predict wh
 
 ```mermaid
 flowchart LR
-    subgraph "Without Markov Property ❌"
+    subgraph "Without Markov Property"
         direction TB
-        H1[s₀] --> H2[s₁] --> H3[s₂] --> H4[s₃]
-        H4 -->|Needs full history| A1[Predict s₄]
+        H1[s0] --> H2[s1] --> H3[s2] --> H4[s3]
+        H4 -->|Needs full history| A1[Predict s4]
     end
 
-    subgraph "With Markov Property ✅"
+    subgraph "With Markov Property"
         direction TB
-        M1[s₀] --> M2[s₁] --> M3[s₂] --> M4[s₃]
-        M4 -->|Only needs s₃| A2[Predict s₄]
+        M1[s0] --> M2[s1] --> M3[s2] --> M4[s3]
+        M4 -->|Only needs s3| A2[Predict s4]
     end
 
     style H1 fill:#ef4444,color:#fff
@@ -47,11 +47,11 @@ flowchart TB
     subgraph "MDP = (S, A, P, R, γ)"
         direction TB
 
-        S["🗺️ S — States<br/>All possible situations<br/>e.g., positions on a board"]
-        A["🎮 A — Actions<br/>All possible moves<br/>e.g., up, down, left, right"]
-        P["🎲 P(s'|s,a) — Transition Prob.<br/>Chance of landing in s' from s via a"]
-        R["💰 R(s,a,s') — Reward<br/>Immediate payoff for a transition"]
-        G["⏳ γ — Discount Factor<br/>0 ≤ γ ≤ 1, how much we value the future"]
+        S["S — States<br/>All possible situations<br/>e.g., positions on a board"]
+        A["A — Actions<br/>All possible moves<br/>e.g., up, down, left, right"]
+        P["P(s'|s,a) — Transition Prob.<br/>Chance of landing in s' from s via a"]
+        R["R(s,a,s') — Reward<br/>Immediate payoff for a transition"]
+        G["γ — Discount Factor<br/>0 ≤ γ ≤ 1, how much we value the future"]
 
         S --> A
         A --> P
@@ -82,22 +82,22 @@ At every timestep, the MDP follows this exact pattern:
 
 ```mermaid
 sequenceDiagram
-    participant Agent as 🤖 Agent
-    participant Env as 🌍 Environment (MDP)
+    participant Agent as Agent
+    participant Env as Environment (MDP)
 
-    Agent->>Env: I am in state sₜ
-    Env->>Agent: Available actions A(sₜ)
-    Agent->>Env: I choose action aₜ
-    Env->>Agent: New state sₜ₊₁ (sampled from P)
-    Env->>Agent: Reward rₜ = R(sₜ, aₜ, sₜ₊₁)
+    Agent->>Env: I am in state st
+    Env->>Agent: Available actions A(st)
+    Agent->>Env: I choose action at
+    Env->>Agent: New state st+1 (sampled from P)
+    Env->>Agent: Reward rt = R(st, at, st+1)
     Note over Agent,Env: Repeat...
 ```
 
 ```mermaid
 flowchart LR
-    S[sₜ] -->|Choose aₜ| A
-    A -->|P(sₜ₊₁|sₜ,aₜ)| S2[sₜ₊₁]
-    S2 -->|R(sₜ,aₜ,sₜ₊₁)| R[rₜ]
+    S[st] -->|"Choose at"| A
+    A -->|"P(st+1|st,at)"| S2[st+1]
+    S2 -->|"R(st,at,st+1)"| R[rt]
     S2 --> S
 
     style S fill:#4f46e5,color:#fff
@@ -114,11 +114,11 @@ Not all actions have guaranteed outcomes. The environment can be stochastic:
 
 ```mermaid
 flowchart TD
-    S["State s<br/>(On square 5)"] -->|Action: Roll 3| A
+    S["State s<br/>(On square 5)"] -->|"Action: Roll 3"| A
 
-    A["🎲 Chance Node"] -->|P = 0.8| S1["s' = Square 8<br/>💰 Reward: +$100"]
-    A -->|P = 0.15| S2["s' = Square 7<br/>💰 Reward: +$50"]
-    A -->|P = 0.05| S3["s' = Square 2<br/>💰 Reward: −$20"]
+    A["Chance Node"] -->|"P = 0.8"| S1["s' = Square 8<br/>Reward: +$100"]
+    A -->|"P = 0.15"| S2["s' = Square 7<br/>Reward: +$50"]
+    A -->|"P = 0.05"| S3["s' = Square 2<br/>Reward: -$20"]
 
     style S fill:#4f46e5,color:#fff
     style A fill:#f59e0b,color:#fff
@@ -140,10 +140,10 @@ flowchart LR
     subgraph "Board Game Analogy"
         direction TB
 
-        Square5["🏠 Square 5<br/>(State s)"]
-        Roll["🎲 Roll a 3<br/>(Action a)"]
-        Square8["🏁 Square 8<br/>(Next State s')"]
-        Money["💵 Collect $100<br/>(Reward r)"]
+        Square5["Square 5<br/>(State s)"]
+        Roll["Roll a 3<br/>(Action a)"]
+        Square8["Square 8<br/>(Next State s')"]
+        Money["Collect $100<br/>(Reward r)"]
 
         Square5 --> Roll
         Roll --> Square8
@@ -167,12 +167,12 @@ graph LR
     subgraph "Reward Timeline"
         direction LR
 
-        Now["t = 0<br/>Reward: r₀"]
-        T1["t = 1<br/>Reward: γ¹ · r₁"]
-        T2["t = 2<br/>Reward: γ² · r₂"]
-        T3["t = 3<br/>Reward: γ³ · r₃"]
+        Now["t = 0<br/>Reward: r0"]
+        T1["t = 1<br/>Reward: γ^1 * r1"]
+        T2["t = 2<br/>Reward: γ^2 * r2"]
+        T3["t = 3<br/>Reward: γ^3 * r3"]
         Dots["..."]
-        Tn["t = n<br/>Reward: γⁿ · rₙ"]
+        Tn["t = n<br/>Reward: γ^n * rn"]
 
         Now --> T1 --> T2 --> T3 --> Dots --> Tn
     end
@@ -197,10 +197,10 @@ graph TD
     subgraph "Discount Factor Spectrum"
         direction LR
 
-        G0["γ = 0<br/>🍔 Myopic<br/>Only NOW matters"]
-        G5["γ = 0.5<br/>😐 Balanced<br/>Short-term focused"]
-        G99["γ = 0.99<br/>🔭 Farsighted<br/>Standard for RL"]
-        G1["γ = 1<br/>♾️ Undiscounted<br/>All future equal"]
+        G0["γ = 0<br/>Myopic<br/>Only NOW matters"]
+        G5["γ = 0.5<br/>Balanced<br/>Short-term focused"]
+        G99["γ = 0.99<br/>Farsighted<br/>Standard for RL"]
+        G1["γ = 1<br/>Undiscounted<br/>All future equal"]
 
         G0 --> G5 --> G99 --> G1
     end
@@ -211,7 +211,7 @@ graph TD
     style G1 fill:#3b82f6,color:#fff
 ```
 
-> **The discount factor $γ$ is like inflation** — $100 today is worth more than $100 next year.
+> **The discount factor γ is like inflation** — $100 today is worth more than $100 next year.
 
 ---
 
@@ -223,20 +223,20 @@ $$G_t = r_t + \gamma r_{t+1} + \gamma^2 r_{t+2} + \gamma^3 r_{t+3} + ... = \sum_
 
 ```mermaid
 flowchart TB
-    subgraph "Return Gₜ"
+    subgraph "Return Gt"
         direction LR
 
-        R0["rₜ<br/>× 1"]
-        R1["rₜ₊₁<br/>× γ"]
-        R2["rₜ₊₂<br/>× γ²"]
-        R3["rₜ₊₃<br/>× γ³"]
+        R0["rt<br/>x 1"]
+        R1["rt+1<br/>x γ"]
+        R2["rt+2<br/>x γ^2"]
+        R3["rt+3<br/>x γ^3"]
         Dots["..."]
-        Rn["rₜ₊ₙ<br/>× γⁿ"]
+        Rn["rt+n<br/>x γ^n"]
 
-        R0 -->|+| R1 -->|+| R2 -->|+| R3 -->|+| Dots -->|+| Rn
+        R0 --> R1 --> R2 --> R3 --> Dots --> Rn
     end
 
-    Sum["= Gₜ<br/>(Total Discounted Return)"]
+    Sum["= Gt<br/>(Total Discounted Return)"]
     Rn --> Sum
 
     style R0 fill:#ef4444,color:#fff
@@ -263,7 +263,7 @@ flowchart TB
 
 ## 🔗 Next Up
 
-> **Chapter 3** — Value Functions: How good is a state? How good is an action in a state? Introducing $V(s)$ and $Q(s,a)$.
+> **Chapter 3** — Value Functions: How good is a state? How good is an action in a state? Introducing V(s) and Q(s,a).
 
 ---
 
