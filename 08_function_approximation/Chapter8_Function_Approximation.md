@@ -109,25 +109,31 @@ flowchart LR
 ```mermaid
 sequenceDiagram
     participant E as Environment
-    participant A as Agent
+    participant A as Online Network
     participant B as Replay Buffer
     participant T as Target Network
 
-    loop Episode
-        E->>A: State s (features)
-        A->>A: Forward pass to Q(s,a1..an)
+    loop Interaction
+        E->>A: State s
+        A->>A: Forward pass, Q of s a theta
         A->>E: Epsilon-greedy action a
-        E->>A: Reward r, Next state s'
-        A->>B: Store (s, a, r, s')
+        E->>A: Reward r, Next state s', Done
+        A->>B: Store s a r s prime Done
     end
 
-    loop Training Step (every N steps)
+    loop Training Step every N steps
         B->>A: Sample mini-batch
-        A->>T: Compute target y = r + gamma * max Q(s',a'; theta-)
-        T->>A: Return target values
-        A->>A: Loss = MSE(y, Q(s,a; theta))
-        A->>A: Backprop and Update theta
-        Note over A: theta- copied from theta periodically
+        A->>T: Send next states s'
+        T->>T: Compute max Q, s prime a prime theta minus
+        T->>A: Return target Q-values
+
+        A->>A: Compute y = r + gamma times 1 minus Done times maxQ
+        A->>A: Compute Q of s a theta
+        A->>A: Loss = MSE of y and Q
+        A->>A: Backpropagation
+        A->>A: Update theta
+
+        Note over A,T: Every N steps, theta minus becomes theta
     end
 ```
 
